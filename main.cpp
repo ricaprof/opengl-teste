@@ -63,14 +63,14 @@ void drawHUD() {
     if (selectedObject >= 0) {
         auto& obj = scene.objects[selectedObject];
         
-        // Posição atual
+      // Posição e Escala atuais
         glRasterPos2f(10, windowHeight - 65);
-        char posStr[100];
-        sprintf(posStr, "Pos: X=%.2f  Y=%.2f  Z=%.2f  | Eixo: %s", 
+        char posStr[150]; // Aumentado um pouco para caber mais texto
+        sprintf(posStr, "Pos: X=%.2f  Y=%.2f  Z=%.2f  | Eixo: %s | Escala: %.2fx", 
                 obj.pos[0], obj.pos[1], obj.pos[2],
-                selectedAxis == 1 ? "X" : (selectedAxis == 2 ? "Y" : (selectedAxis == 3 ? "Z" : "Nenhum")));
+                selectedAxis == 1 ? "X" : (selectedAxis == 2 ? "Y" : (selectedAxis == 3 ? "Z" : "Nenhum")),
+                obj.scale); // Mostra a escala na interface
         glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const unsigned char*)posStr);
-
         // Cor
         glRasterPos2f(10, windowHeight - 85);
         sprintf(posStr, "Cor: R=%.1f G=%.1f B=%.1f", obj.color[0], obj.color[1], obj.color[2]);
