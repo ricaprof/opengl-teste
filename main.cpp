@@ -63,13 +63,14 @@ void drawHUD() {
     if (selectedObject >= 0) {
         auto& obj = scene.objects[selectedObject];
         
-      // Posição e Escala atuais
+      // Posição, Rotação e Escala atuais
         glRasterPos2f(10, windowHeight - 65);
-        char posStr[150]; // Aumentado um pouco para caber mais texto
-        sprintf(posStr, "Pos: X=%.2f  Y=%.2f  Z=%.2f  | Eixo: %s | Escala: %.2fx", 
+        char posStr[200]; 
+        sprintf(posStr, "Pos: X=%.1f Y=%.1f Z=%.1f | Rot: X=%.0f Y=%.0f Z=%.0f | Esc: %.2fx | Eixo: %s", 
                 obj.pos[0], obj.pos[1], obj.pos[2],
-                selectedAxis == 1 ? "X" : (selectedAxis == 2 ? "Y" : (selectedAxis == 3 ? "Z" : "Nenhum")),
-                obj.scale); // Mostra a escala na interface
+                obj.rot[0], obj.rot[1], obj.rot[2],
+                obj.scale,
+                selectedAxis == 1 ? "X" : (selectedAxis == 2 ? "Y" : (selectedAxis == 3 ? "Z" : "Nenhum")));
         glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const unsigned char*)posStr);
         // Cor
         glRasterPos2f(10, windowHeight - 85);
@@ -112,6 +113,26 @@ void moveSelectedObject(float dx, float dy, float dz) {
     }
 }
 
+void rotateSelectedObject(float angle) {
+    if (selectedObject >= 0) {
+        auto& obj = scene.objects[selectedObject];
+        if (selectedAxis == 1) obj.rot[0] += angle;
+        else if (selectedAxis == 2) obj.rot[1] += angle;
+        else if (selectedAxis == 3) obj.rot[2] += angle;
+        else {
+            // Se o movimento for livre (0), roda um pouco em todos para dar feedback
+            obj.rot[0] += angle;
+            obj.rot[1] += angle;
+            obj.rot[2] += angle;
+        }
+        
+        // Mantém os ângulos entre 0 e 360 para não ter números gigantes
+        if (obj.rot[0] >= 360.0f) obj.rot[0] -= 360.0f; else if (obj.rot[0] < 0.0f) obj.rot[0] += 360.0f;
+        if (obj.rot[1] >= 360.0f) obj.rot[1] -= 360.0f; else if (obj.rot[1] < 0.0f) obj.rot[1] += 360.0f;
+        if (obj.rot[2] >= 360.0f) obj.rot[2] -= 360.0f; else if (obj.rot[2] < 0.0f) obj.rot[2] += 360.0f;
+    }
+}
+
 void keyboard(unsigned char key, int x, int y) {
     if (selectedObject >= 0) {
         auto& obj = scene.objects[selectedObject];
@@ -138,6 +159,10 @@ void keyboard(unsigned char key, int x, int y) {
             // Escala (Tamanho)
             case ']': scene.scaleObject(selectedObject, 1.1f); break; // Aumenta 10%
             case '[': scene.scaleObject(selectedObject, 0.9f); break; // Diminui 10%
+
+            // Rotação (Orientação)
+            case '.': case '>': rotateSelectedObject(5.0f); break;  // Roda +5 graus
+            case ',': case '<': rotateSelectedObject(-5.0f); break; // Roda -5 graus
 
             case 'c': case 'C': scene.createCube(); selectedObject = scene.objects.size() - 1; break;
             case 's': case 'S': scene.createSphere(); selectedObject = scene.objects.size() - 1; break;
