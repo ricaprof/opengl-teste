@@ -53,8 +53,10 @@ void drawHUD() {
     glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const unsigned char*)info.c_str());
 
     // Linha 2 - Projeção e Iluminação
-    info = "Projeção: " + std::string(orthoProjection ? "ORT" : "PERS") +
-           " | Iluminação: " + std::string(lightingEnabled ? "ON" : "OFF");
+    // Linha 2 - Projeção e Iluminação
+    // \xE7 = ç | \xE3 = ã
+    info = "Proje\xE7\xE3o: " + std::string(orthoProjection ? "ORT" : "PERS") +
+           " | Ilumina\xE7\xE3o: " + std::string(lightingEnabled ? "ON" : "OFF");
     glRasterPos2f(10, windowHeight - 40);
     glutBitmapString(GLUT_BITMAP_HELVETICA_12, (const unsigned char*)info.c_str());
 
@@ -252,8 +254,8 @@ int main(int argc, char** argv) {
     mainMenu = glutCreateMenu(menu);
     glutAddSubMenu("Objetos", objectMenu);
     glutAddSubMenu("Cor (selecionado)", colorMenu);
-    glutAddMenuEntry("Alternar Iluminação", 3);
-    glutAddMenuEntry("Alternar Projeção", 4);
+    glutAddMenuEntry("Alternar Ilumina\xE7\xE3o", 3);
+    glutAddMenuEntry("Alternar Proje\xE7\xE3o", 4);
     glutAddMenuEntry("Alternar Eixos", 5);
     glutAddMenuEntry("Alternar Grid", 6);
     glutAddMenuEntry("Salvar Cena", 7);
