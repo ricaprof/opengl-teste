@@ -23,6 +23,8 @@ bool leftButtonDown = false;
 bool rightButtonDown = false;
 // Menu
 int mainMenu, objectMenu, lightMenu, projMenu, colorMenu;
+// Menus de Ajuda
+int helpMenu, helpMoveMenu, helpTransformMenu, helpColorMenu, helpSystemMenu;
 
 // Controle de posição
 int selectedAxis = 0; // 0 = Nenhum, 1 = X, 2 = Y, 3 = Z
@@ -270,7 +272,7 @@ int main(int argc, char** argv) {
     glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmb);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDif);
 
-    // Menus
+   // Menus de Ferramentas
     objectMenu = glutCreateMenu(menu);
     glutAddMenuEntry("Criar Cubo", 1);
     glutAddMenuEntry("Criar Esfera", 2);
@@ -280,7 +282,44 @@ int main(int argc, char** argv) {
     glutAddMenuEntry("Verde", 11);
     glutAddMenuEntry("Azul", 12);
 
+    // ================= MENUS DE AJUDA =================
+    helpMoveMenu = glutCreateMenu(menu);
+    glutAddMenuEntry("Setas: Mover no plano X/Y", 0);
+    glutAddMenuEntry("PageUp/Down: Mover no eixo Z", 0);
+    glutAddMenuEntry("X, Y, Z: Travar movimento num eixo", 0);
+    glutAddMenuEntry("0: Movimento livre (destravar)", 0);
+    glutAddMenuEntry("+ / - : Movimento fino", 0);
+    glutAddMenuEntry("Home: Centralizar objeto", 0);
+
+    helpTransformMenu = glutCreateMenu(menu);
+    glutAddMenuEntry("] / [ : Aumentar / Diminuir tamanho", 0);
+    glutAddMenuEntry(". / , : Rodar no eixo selecionado", 0);
+
+    helpColorMenu = glutCreateMenu(menu);
+    glutAddMenuEntry("R / E : + / - canal Vermelho", 0);
+    glutAddMenuEntry("G / F : + / - canal Verde", 0);
+    glutAddMenuEntry("B / V : + / - canal Azul", 0);
+
+    helpSystemMenu = glutCreateMenu(menu);
+    glutAddMenuEntry("C: Novo Cubo | S: Nova Esfera", 0);
+    glutAddMenuEntry("L: Ligar / Desligar Ilumina\xE7\xE3o", 0); // \xE7\xE3 = çã
+    glutAddMenuEntry("P: Alternar Proje\xE7\xE3o (Pers / Ort)", 0);
+    glutAddMenuEntry("A: Mostrar Eixos | G: Mostrar Grelha", 0);
+    glutAddMenuEntry("K: Guardar Cena  | O: Carregar Cena", 0);
+    glutAddMenuEntry("Esc: Fechar programa", 0);
+
+    // Menu agrupador de ajuda
+    helpMenu = glutCreateMenu(menu);
+    glutAddSubMenu("Teclas de Movimento", helpMoveMenu);
+    glutAddSubMenu("Tamanho e Rota\xE7\xE3o", helpTransformMenu);
+    glutAddSubMenu("Cores (Canais RGB)", helpColorMenu);
+    glutAddSubMenu("Sistema e Visuais", helpSystemMenu);
+    // ==================================================
+
+    // Menu Principal
     mainMenu = glutCreateMenu(menu);
+    // Adicionamos a Ajuda logo no topo para ser fácil de encontrar
+    glutAddSubMenu("[?] AJUDA E TECLAS", helpMenu); 
     glutAddSubMenu("Objetos", objectMenu);
     glutAddSubMenu("Cor (selecionado)", colorMenu);
     glutAddMenuEntry("Alternar Ilumina\xE7\xE3o", 3);
@@ -289,6 +328,7 @@ int main(int argc, char** argv) {
     glutAddMenuEntry("Alternar Grid", 6);
     glutAddMenuEntry("Salvar Cena", 7);
     glutAddMenuEntry("Carregar Cena", 8);
+    
     glutAttachMenu(GLUT_RIGHT_BUTTON);
 
     glutDisplayFunc(display);
