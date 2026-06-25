@@ -96,10 +96,10 @@ void display() {
         scene.highlightObject(selectedObject);
     }
 
-   
     drawHUD();
     glutSwapBuffers();
 }
+
 // ==================== CONTROLE DE POSIÇÃO ====================
 void moveSelectedObject(float dx, float dy, float dz) {
     if (selectedObject >= 0) {
@@ -173,9 +173,7 @@ void specialKeys(int key, int x, int y) {
     glutPostRedisplay();
 }
 
-// ... (mantenha as funções mouse, motion, menu e main iguais às da versão anterior)
-
-bool hoveredObject = -1;
+bool hoveredObject = false;
 
 void mouse(int button, int state, int x, int y) {
     lastMouseX = x; lastMouseY = y;
@@ -199,7 +197,6 @@ void motion(int x, int y) {
     lastMouseX = x; lastMouseY = y;
     glutPostRedisplay();
 }
-
 
 void menu(int value) {
     if (selectedObject >= 0) {
@@ -264,10 +261,15 @@ int main(int argc, char** argv) {
     glutAttachMenu(GLUT_RIGHT_BUTTON);
 
     glutDisplayFunc(display);
+    
+    // CORREÇÃO: Adicionado glViewport para mapear o raio e o clique de forma precisa
     glutReshapeFunc([](int w, int h){
         windowWidth = w; windowHeight = h;
+        if (h == 0) h = 1;
+        glViewport(0, 0, w, h); 
         camera.setProjection(orthoProjection, w, h);
     });
+    
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(specialKeys);
     glutMouseFunc(mouse);

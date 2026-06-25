@@ -85,7 +85,8 @@ int Scene::pickObject(int mouseX, int mouseY, int width, int height, bool& hit) 
     glGetDoublev(GL_PROJECTION_MATRIX, projection);
 
     float winX = (float)mouseX;
-    float winY = (float)viewport[3] - (float)mouseY;   // Inverte o Y
+    // CORREÇÃO: Utilizando o height da janela para inverter o Y com precisão
+    float winY = (float)height - (float)mouseY;
 
     gluUnProject(winX, winY, 0.0, modelview, projection, viewport, &nearX, &nearY, &nearZ);
     gluUnProject(winX, winY, 1.0, modelview, projection, viewport, &farX, &farY, &farZ);
@@ -109,17 +110,22 @@ int Scene::pickObject(int mouseX, int mouseY, int width, int height, bool& hit) 
         
         dirX /= len; dirY /= len; dirZ /= len;
 
+        // CORREÇÃO: Produto escalar para garantir que o objeto está à frente da câmera e não nas costas
+        float dotP = dx * dirX + dy * dirY + dz * dirZ;
+        if (dotP < 0.0f) continue; // Ignora se estiver atrás
+
         float crossX = dy * dirZ - dz * dirY;
         float crossY = dz * dirX - dx * dirZ;
         float crossZ = dx * dirY - dy * dirX;
         float dist = sqrtf(crossX*crossX + crossY*crossY + crossZ*crossZ);
 
-        float radius = obj.scale * (obj.type == "cube" ? 0.85f : 0.75f);
+        // CORREÇÃO: Raio de colisão preciso da hitbox e sem multiplicadores gigantes
+        float radius = obj.scale * (obj.type == "cube" ? 0.866f : 0.7f);
 
-        if (dist < radius * 1.8f) {
-            float distToCam = sqrtf(dx*dx + dy*dy + dz*dz);
-            if (distToCam < minDist) {
-                minDist = distToCam;
+        if (dist <= radius) {
+            // Em caso de colisão, selecionamos o objeto que está mais próximo da câmera
+            if (dotP < minDist) {
+                minDist = dotP;
                 closestIndex = i;
             }
         }
