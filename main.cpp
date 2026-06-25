@@ -135,6 +135,10 @@ void keyboard(unsigned char key, int x, int y) {
             case 'b': case 'B': obj.color[2] = std::min(1.0f, obj.color[2] + 0.1f); break;
             case 'v': case 'V': obj.color[2] = std::max(0.0f, obj.color[2] - 0.1f); break;
 
+            // Escala (Tamanho)
+            case ']': scene.scaleObject(selectedObject, 1.1f); break; // Aumenta 10%
+            case '[': scene.scaleObject(selectedObject, 0.9f); break; // Diminui 10%
+
             case 'c': case 'C': scene.createCube(); selectedObject = scene.objects.size() - 1; break;
             case 's': case 'S': scene.createSphere(); selectedObject = scene.objects.size() - 1; break;
         }
